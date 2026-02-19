@@ -1,62 +1,81 @@
 ---
 name: solid-principles-pattern
-description: Always Apply solid principles for coding
+description: Applies SOLID principles when building or refactoring React/Next.js/frontend components. Use when the user asks to build components, improve code quality, design reusable UI, structure folders, add new functionality without breaking existing code, or review frontend architecture.
 ---
 
 # Always Apply solid principles for coding
-| Principle | Frontend rule |
-|-----------|----------------|
-| S | One component = one concern (UI / data / logic or algorithm) |
-| O | Extend via variants, composition; avoid if/else for new types |
-| L | Child components replaceable for parent; same contract |
-| I | Small, specific props; avoid fat shared props |
-| D | Depend on abstractions (hooks, services); inject data sources |
+
+| Principle | Frontend rule                                                 |
+| --------- | ------------------------------------------------------------- |
+| S         | One component = one concern (UI / data / logic or algorithm)  |
+| O         | Extend via variants, composition; avoid if/else for new types |
+| L         | Child components replaceable for parent; same contract        |
+| I         | Small, specific props; avoid fat shared props                 |
+| D         | Depend on abstractions (hooks, services); inject data sources |
 
 ## Bad vs Good (per principle)
 
 ### S – Single Responsibility
+
 **Bad:** One component does UI + fetch + logic
+
 ```tsx
 function UserList() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([])
   useEffect(() => {
-    fetch("/api/users").then(r => r.json()).then(setUsers);
-  }, []);
-  return users.filter(u => u.active).map(u => <div>{u.name}</div>);
+    fetch("/api/users")
+      .then((r) => r.json())
+      .then(setUsers)
+  }, [])
+  return users.filter((u) => u.active).map((u) => <div>{u.name}</div>)
 }
 ```
+
 **Good:** Component (UI only) + hook (logic) + service (data)
+
 ```tsx
 // UserList.tsx
-const { users } = useActiveUsers();
-return users.map(u => <UserRow key={u.id} user={u} />);
+const { users } = useActiveUsers()
+return users.map((u) => <UserRow key={u.id} user={u} />)
 ```
 
 ### O – Open/Closed
+
 **Bad:** if/else for each new type
+
 ```tsx
 function Button({ type }) {
-  if (type === "primary") return <button className="bg-blue-500" />;
-  if (type === "secondary") return <button className="bg-gray-500" />;
-  if (type === "danger") return <button className="bg-red-500" />;
+  if (type === "primary") return <button className="bg-blue-500" />
+  if (type === "secondary") return <button className="bg-gray-500" />
+  if (type === "danger") return <button className="bg-red-500" />
 }
 ```
+
 **Good:** Variant prop; extend via config, not branches
+
 ```tsx
-const variants = { primary: "bg-blue-500", secondary: "bg-gray-500", danger: "bg-red-500" };
+const variants = {
+  primary: "bg-blue-500",
+  secondary: "bg-gray-500",
+  danger: "bg-red-500"
+}
 function Button({ variant = "primary", ...props }) {
-  return <button className={variants[variant]} {...props} />;
+  return <button className={variants[variant]} {...props} />
 }
 ```
 
 ### L – Liskov Substitution
+
 **Bad:** Child breaks parent's expected behavior
+
 ```tsx
 <Modal onClose={handleClose}>
-  <SpecialModalChild onClose={null} />  // ignores onClose, different contract
+  <SpecialModalChild onClose={null} /> // ignores onClose, different contract
 </Modal>
 ```
+
 **Good:** Child honors same contract; swappable
+
 ```tsx
 <Modal onClose={handleClose}>
   <ConfirmModalBody onClose={handleClose} message="Delete?" />
@@ -65,12 +84,16 @@ function Button({ variant = "primary", ...props }) {
 ```
 
 ### I – Interface Segregation
+
 **Bad:** Fat shared props
+
 ```tsx
 <Card title="x" subtitle="y" avatarUrl="z" tags={[]} actions={[]} meta={{}}
   onClick onHover loading error ... />
 ```
+
 **Good:** Small, specific props
+
 ```tsx
 <Card title="x" subtitle="y" />
 <CardHeader avatarUrl="z" />
@@ -78,33 +101,56 @@ function Button({ variant = "primary", ...props }) {
 ```
 
 ### D – Dependency Inversion
-**Bad:** Component directly calls fetch
+
+**Bad:** Components directly calls fetch
+
 ```tsx
 function ProductList() {
-  const [data, setData] = useState([]);
-  useEffect(() => { fetch("/api/products").then(r => r.json()).then(setData); }, []);
-  return <ul>{data.map(p => <li>{p.name}</li>)}</ul>;
+  const [data, setData] = useState([])
+  useEffect(() => {
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then(setData)
+  }, [])
+  return (
+    <ul>
+      {data.map((p) => (
+        <li>{p.name}</li>
+      ))}
+    </ul>
+  )
 }
 ```
+
 **Good:** Depends on injected service / hook
+
 ```tsx
 function ProductList({ productService }: { productService: ProductApi }) {
-  const { products } = useProducts(productService);
-  return <ul>{products.map(p => <li key={p.id}>{p.name}</li>)}</ul>;
+  const { products } = useProducts(productService)
+  return (
+    <ul>
+      {products.map((p) => (
+        <li key={p.id}>{p.name}</li>
+      ))}
+    </ul>
+  )
 }
 ```
 
 ## When to Activate This Skill
+
 Activate this skill when the user asks to:
+
 - build website section code (HTML5 / CSS3 / Javascript / tailwindcss)
-- build or refactor a (React / Next.js / Remix / React Native / Expo) component
+- build or refactor a (React / Next.js / Remix / React Native / Expo) components
 - improve frontend code quality
 - design reusable UI components
 - structure frontend folders
-- add features without breaking existing code
+- add new functionality without breaking existing code
 - review frontend architecture or PRs
 
 ## project Rules (Strict)
+
 1. Prefer **composition over inheritance**
 2. Separate **UI, logic, and data access**
 3. Avoid **god components**
@@ -114,36 +160,41 @@ Activate this skill when the user asks to:
 7. Optimize for **readability over cleverness**
 
 #### Apply SRP Like This
+
 - Component → UI only
 - Hook → state + interaction logic
 - Service / Repo → API & side effects
 - Utils → pure transformations
 
 #### Error handling
+
 - **Fetcher:** Throw typed errors; handle non-JSON error bodies (e.g. `response.text()` fallback)
 - **Hooks:** Return `{ data, error, loading }`; handle errors in the hook, not in the component
 - **Components:** Render error UI from hook state; keep UI dumb (no try/catch in render)
 - **Error boundaries:** Use for uncaught render errors; keep per-route or per-section
 
 **Bad:** Component catches, fetcher assumes JSON
+
 ```tsx
 // Bad: component does error handling
 function UserList() {
   try {
-    const data = await fetchUsers();
-    return <ul>...</ul>;
+    const data = await fetchUsers()
+    return <ul>...</ul>
   } catch (e) {
-    return <div>Error!</div>;
+    return <div>Error!</div>
   }
 }
 ```
+
 **Good:** Hook returns error; component renders based on state
+
 ```tsx
 // Good: hook owns error state
-const { users, error, loading } = useUsers();
-if (loading) return <Skeleton />;
-if (error) return <ErrorState message={error.message} onRetry={refetch} />;
-return <UserListItems users={users} />;
+const { users, error, loading } = useUsers()
+if (loading) return <Skeleton />
+if (error) return <ErrorState message={error.message} onRetry={refetch} />
+return <UserListItems users={users} />
 ```
 
 ```bash
@@ -181,7 +232,7 @@ src/
 ├── hooks/
 │   ├── auth/                     # auth hooks
 │   │   ├── useLogout
-│   │   └── useLoginWithGmail        
+│   │   └── useLoginWithGmail
 │   ├── global/                  # Global reusable hooks (non-feature specific)
 │       └── useDebounce.ts
 │       └── useMediaQuery.ts
@@ -190,9 +241,9 @@ src/
 │   ├── fetcher.ts                 # fetch wrapper
 │   ├── constants.ts               # Constant Variable name and values set like (ROLE | USER_PROFILE) etc
 │   ├── format.ts                  # use for format like (Time | Date | currency etc)
-│   └── validators.ts              # 
+│   └── validators.ts              #
 │
-├── .env.production                # env for production variables 
+├── .env.production                # env for production variables
 ├── .env.development               # env for developer development variables
 ├── .env.staging                   # env for staging variables for testing
 ├── .example-env                   # This file push to git with constant variable key
@@ -207,16 +258,18 @@ src/
 ```
 
 ## Example of code for lib/fetcher.ts
+
 Native fetch Wrapper (Recommended for Next.js) for API calls
+
 ```ts
-type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 
 interface FetchOptions<TBody> {
-  method?: HttpMethod;
-  body?: TBody;
-  headers?: HeadersInit;
-  cache?: RequestCache;
-  next?: NextFetchRequestConfig;
+  method?: HttpMethod
+  body?: TBody
+  headers?: HeadersInit
+  cache?: RequestCache
+  next?: NextFetchRequestConfig
 }
 
 /**
@@ -227,13 +280,7 @@ async function request<TResponse, TBody = unknown>(
   endpoint: string,
   options: FetchOptions<TBody> = {}
 ): Promise<TResponse> {
-  const {
-    method = "GET",
-    body,
-    headers,
-    cache = "no-store",
-    next,
-  } = options;
+  const { method = "GET", body, headers, cache = "no-store", next } = options
 
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`,
@@ -244,19 +291,23 @@ async function request<TResponse, TBody = unknown>(
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        ...headers,
+        ...headers
       },
-      body: body ? JSON.stringify(body) : undefined,
+      body: body ? JSON.stringify(body) : undefined
     }
-  );
+  )
 
   if (!response.ok) {
-    let err: unknown;
-    try { err = await response.json(); } catch { err = { message: response.statusText }; }
-    throw err;
+    let err: unknown
+    try {
+      err = await response.json()
+    } catch {
+      err = { message: response.statusText }
+    }
+    throw err
   }
 
-  return response.json();
+  return response.json()
 }
 
 /**
@@ -277,35 +328,35 @@ export const apiClient = {
     request<T, B>(url, { ...options, method: "PATCH", body }),
 
   delete: <T>(url: string, options?: FetchOptions<never>) =>
-    request<T>(url, { ...options, method: "DELETE" }),
-};
-
-
-```
-
-Optional: Auth Token Header (If Needed)
-```ts
-const headers = {
-  "Authorization": `Bearer ${token}`,
-};
-```
-
-## Example  this page code (Best Pattern)
-
-**src/app/(dashboard)/dashboard/page.tsx**
-```bash
-import DashboardView from "@/features/dashboard/DashboardView";
-
-export default function Page() {
-  return <DashboardView />;
+    request<T>(url, { ...options, method: "DELETE" })
 }
 ```
 
-**src/features/dashboard/DashboardView.tsx**
+Optional: Auth Token Header (If Needed)
 
-```bash
-import StatsSection from "@/sections/StatsSection";
-import RecentOrdersSection from "@/sections/RecentOrdersSection";
+```ts
+const headers = {
+  Authorization: `Bearer ${token}`
+}
+```
+
+## Example this page code (Best Pattern)
+
+**src/app/(dashboard)/dashboard/page.tsx**
+
+```tsx
+import DashboardView from "@/components/dashboard/DashboardView"
+
+export default function Page() {
+  return <DashboardView />
+}
+```
+
+**src/components/dashboard/DashboardView.tsx**
+
+```tsx
+import StatsSection from "@/components/StatsSection"
+import RecentOrdersSection from "@/components/RecentOrdersSection"
 
 export default function DashboardView() {
   return (
@@ -313,7 +364,7 @@ export default function DashboardView() {
       <StatsSection />
       <RecentOrdersSection />
     </>
-  );
+  )
 }
 ```
 
@@ -334,8 +385,8 @@ Example of code for services folder
 **src/services/auth.service.ts**
 
 ```ts
-import { AuthResponse, LoginPayload, RegisterPayload } from "@/types/auth.types";
-import { apiClient } from "@/lib/fetcher";
+import { AuthResponse, LoginPayload, RegisterPayload } from "@/types/auth.types"
+import { apiClient } from "@/lib/fetcher"
 
 /**
  * Auth API service
@@ -343,23 +394,22 @@ import { apiClient } from "@/lib/fetcher";
  */
 export const authApi = {
   login: async (payload: LoginPayload): Promise<AuthResponse> => {
-    const response = await apiClient.post("/auth/login", payload);
-    return response;
+    const response = await apiClient.post("/auth/login", payload)
+    return response
   },
 
   register: async (payload: RegisterPayload): Promise<AuthResponse> => {
-    const response = await apiClient.post("/auth/register", payload);
-    return response;
+    const response = await apiClient.post("/auth/register", payload)
+    return response
   },
 
   logout: async (): Promise<void> => {
-    await apiClient.post("/auth/logout");
+    await apiClient.post("/auth/logout")
   },
 
   me: async (): Promise<AuthResponse> => {
-    const response = await apiClient.get("/auth/me");
-    return response;
-  },
-};
-
+    const response = await apiClient.get("/auth/me")
+    return response
+  }
+}
 ```

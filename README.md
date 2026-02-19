@@ -1,57 +1,15 @@
 # solid-principles-pattern
 
-A Cursor AI skill that applies SOLID principles when building or refactoring React/Next.js frontend components. Use when you need better code quality, reusable UI, maintainable architecture, or frontend refactoring guidance.
+A Cursor AI skill that applies SOLID principles when building or refactoring React/Next.js/Remix or Javascript Frameworks for frontend components. Use when you need better code quality, reusable UI, maintainable architecture, or frontend refactoring guidance.
 
 **Keywords:** Cursor AI skills, Cursor rules, Agent Skills, SOLID principles, React, Next.js, frontend, code quality, components
 
 ---
 
-## SOLID Frontend Rules
+# pixel-perfect-responsive-ui (design-to-frontend-code)
 
-| Principle | Frontend rule |
-| --------- | ------------- |
-| **S** | One component = one concern (UI / data / logic) |
-| **O** | Extend via variants, composition; avoid if/else for new types |
-| **L** | Child components replaceable for parent; same contract |
-| **I** | Small, specific props; avoid fat shared props |
-| **D** | Depend on abstractions (hooks, services); inject data sources |
+A Cursor AI skill that converts Figma, Sketch, or Adobe XD designs into pixel-perfect, responsive, accessible UI using Tailwind utility classes, design tokens, and WCAG semantics. Use when implementing design handoff, building Tailwind components, or applying design trends (minimalism, brutalism, bento, flat). Covers mobile-first responsive design, reduced motion, RTL support, and image/font optimization.
 
----
+**Keywords:** Cursor AI skills, pixel-perfect UI, Tailwind, design tokens, Figma-to-code, responsive, accessibility, WCAG
 
-## When to Use
 
-- build or refactor React / Next.js / Remix / React Native / Expo components
-- improve frontend code quality
-- design reusable UI components
-- structure frontend folders
-- add new functionality without breaking existing code
-- review frontend architecture or PRs
-
----
-
-## Project Rules
-
-- Composition over inheritance
-- Separate UI, logic, and data access
-- Avoid god components
-- Depend on abstractions, not implementations
-
----
-
-## Installation
-
-Copy the `solid-principles` folder to your Cursor skills directory:
-
-**Project-level** (shared with the repo):
-
-```
-.cursor/skills/solid-principles/
-```
-
-**Global** (available across all projects):
-
-```
-~/.cursor/skills/solid-principles/
-```
-
-The skill auto-activates when Cursor detects relevant user intent (e.g., building components, refactoring, improving code quality).

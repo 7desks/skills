@@ -51,13 +51,13 @@ function Button({ type }) {
 }
 ```
 
-**Good:** Variant prop; extend via config, not branches
+**Good:** Variant prop; extend via config, not branches. Prefer design tokens (see design-to-frontend skill).
 
 ```tsx
 const variants = {
-  primary: "bg-blue-500",
-  secondary: "bg-gray-500",
-  danger: "bg-red-500"
+  primary: "bg-primary-600",
+  secondary: "bg-neutral-600",
+  danger: "bg-error-600"
 }
 function Button({ variant = "primary", ...props }) {
   return <button className={variants[variant]} {...props} />
@@ -197,7 +197,7 @@ if (error) return <ErrorState message={error.message} onRetry={refetch} />
 return <UserListItems users={users} />
 ```
 
-```bash
+```tsx
 src/
 ├── app/                          # Routes only (pages/layouts)
 │   ├── layout.tsx
